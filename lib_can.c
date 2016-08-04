@@ -49,7 +49,7 @@
 #include <linux/can.h>
 #include <linux/can/error.h>
 
-#include "lib.h"
+#include "lib_can.h"
 
 #define CANID_DELIM '#'
 #define DATA_SEPERATOR '.'
@@ -519,14 +519,14 @@ static int snprintf_error_data(char *buf, size_t len, uint8_t err,
 	return n;
 }
 
-static int snprintf_error_lostarb(char *buf, size_t len, const struct canfd_frame *cf)
+static int snprintf_error_lostarb(char *buf, size_t len, struct canfd_frame *cf)
 {
 	if (len <= 0)
 		return 0;
 	return snprintf(buf, len, "{at bit %d}", cf->data[0]);
 }
 
-static int snprintf_error_ctrl(char *buf, size_t len, const struct canfd_frame *cf)
+static int snprintf_error_ctrl(char *buf, size_t len, struct canfd_frame *cf)
 {
 	int n = 0;
 
@@ -542,7 +542,7 @@ static int snprintf_error_ctrl(char *buf, size_t len, const struct canfd_frame *
 	return n;
 }
 
-static int snprintf_error_prot(char *buf, size_t len, const struct canfd_frame *cf)
+static int snprintf_error_prot(char *buf, size_t len, struct canfd_frame *cf)
 {
 	int n = 0;
 
@@ -563,8 +563,8 @@ static int snprintf_error_prot(char *buf, size_t len, const struct canfd_frame *
 	return n;
 }
 
-void snprintf_can_error_frame(char *buf, size_t len, const struct canfd_frame *cf,
-                  const char* sep)
+void snprintf_can_error_frame(char *buf, size_t len, struct canfd_frame *cf,
+			      char* sep)
 {
 	canid_t class, mask;
 	int i, n = 0, classes = 0;
