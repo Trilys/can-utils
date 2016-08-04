@@ -33,7 +33,7 @@ int main (void)
 {
 	char canReceived[8];	//This array will contain the CAN data received
 	char sizeOfCAN;			//This is the size of the data received
-	char i;
+	char i;					//For for…
 	CAN_init();	//Initialise CAN
 	
 	//Save ID 0x100 into canReceived. Stop function after 10seconds.
