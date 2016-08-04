@@ -1,7 +1,22 @@
-/*
- * Used for CAN with UART
- *
- */
+ /*
+  * can_min.h
+  * This file is part of can-utils
+  *
+  * Copyright (C) 2016 - Trilys
+  *
+  * can-utils is free software; you can redistribute it and/or
+  * modify it under the terms of the GNU Lesser General Public
+  * License as published by the Free Software Foundation; either
+  * version 2.1 of the License, or (at your option) any later version.
+  *
+  * can-utils is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  * Lesser General Public License for more details.
+  *
+  * You should have received a copy of the GNU Lesser General Public License
+  * along with can-utils. If not, see <http://www.gnu.org/licenses/>.
+  */
 
 //Send the first sizeOfData bytes of data_to_send to id.
 //Return 0 if ok
@@ -14,46 +29,29 @@ char CAN_send(long id, char *data_to_send, char sizeOfData);
 //Return 0 if ok
 char CAN_send_offi(char *data_to_send);
 
-//Connect to contro.
-/*
-Check if already connected :
-601#4000500100000000
-581#4F00500100000000
-ID:
-601#2B0050030000EFFA
-581#6000500300000000
-Password:
-601#2B005002DF4BEFFA
-581#6000500200000000
-Vérification:
-601#4000500100000000
-581#4F00500104000000
-             ↑      
-Proof of connection
-*/
-//Return 0 if ok
-char CAN_connect();
-
-//Ex1 : 581#6020290100000000 Validation change torque → 42 01|2 2920 01
-//Ex2 : 581#4B202901E8030000 Info/Read change torque	42 01|2 2920 01 03E8
-void convert_CAN_to_UART(char *can, char *uart, unsigned char *sizeOfValue);
-//Ex1 : 581#6020290100000000 Validation change torque → 42 0581 60 2920 01
-//Ex2 : 581#4B202901E8030000 Info/Read change torque	42 0581 4B 2920 01 03E8
-//			0011223344556677
-void convert_CAN_to_UART2(unsigned long canID, char *can, unsigned char sizeOfCAN, char *uart, unsigned char *sizeOfUART);
-
-//Receive CAN from canIDtoFilter marked as decimal.
+//Receive CAN from canIDtoFilter marked as decimal. 
+//delayToOffInUs : stop CAN_receive after this delay, in microseconds
+//canReceived[] is an array which contain the received CAN data.
+//sizeOfCAN is the size of CAN data received
 char CAN_receive(long canIDtoFilter, long delayToOffInUs, char canReceived[], char *sizeOfCAN);
 
-
-//Launch CAN_init to launch CAN_receive_lite or CAN_connect_lite, then CAN_deinit
+//Launch CAN_init to launch CAN_*_lite, then CAN_deinit() to close CAN interface.
 char CAN_init();
-//Connect to sevcon after CAN_init
-char CAN_connect_lite();
+
+//Same as CAN_receive, but it needs CAN_init() before.
 char CAN_receive_lite(long canIDtoFilter, long delayToOffInUs, char canReceived[], char *sizeOfCAN);
-//size addressToFilter = 3 bytes : address×2+sub-address
+
+//Same as CAN_receive_lite but you can filter with sub-address.
 char CAN_receive_filtered_lite(long canIDtoFilter, char addressToFilter[],long delayToOffInUs, char canReceived[], char *sizeOfCAN);
+
+//Same as CAN_receive but you can receive any IDs you want.
+//nbIDtoFilter : put how many ID you want to filter
+//canIDtoFilter : separate each IDs you want to filter in this array.
+//canId will get the ID received.
+//canReceived is an array which contain CAN data
+//sizeOfCAN is the size of data received.
 char CAN_receive_lite_multifilters(unsigned char nbIDtoFilter, long canIDtoFilter[], long delayToOffInUs, long *canId, char canReceived[], char *sizeOfCAN);
+
 //Close sockets
 char CAN_deinit();
 
